@@ -1,0 +1,88 @@
+pop_movies = []
+
+for i in range(0,100):   #
+
+# 把原來的[0]都換成[i]；中間都print出訊息，才知道進度
+# 加try, except，才不會因錯誤而中斷
+    movie=[]
+
+    try:
+        print(f'現在開始抓第{i+1}名的電影...')
+
+        # 本周排名
+        print(f'現在開始抓第{i+1}名的目前排名！')
+        cRank=data[i]['currentRank']
+        print(cRank)
+
+        # 上周排名
+        print(f'現在開始抓第{i+1}名之前的排名！')
+        if data[i]['node']['meterRanking']['rankChange']['changeDirection']=='UP':
+            pRank=cRank+data[i]['node']['meterRanking']['rankChange']['difference']
+        elif data[i]['node']['meterRanking']['rankChange']['changeDirection']=='DOWN':
+            pRank=cRank-data[i]['node']['meterRanking']['rankChange']['difference']
+        else:
+            pRank=cRank
+        print(pRank)
+
+        #片名
+        print(f'現在開始抓第{i+1}名的片名！')
+        title = data[i]['node']['originalTitleText']['text']
+        print(title)
+
+        #連結
+        print(f'現在開始抓第{i+1}名的連結！')
+        num= data[i]['node']['id']
+        link = 'https://imdb.com/title/'+num
+        print(link)
+
+
+        # 入去囝頁的兩項用link入去，愛佇遮處理
+        # 片長
+        # 發現若有問題，攏是佇「片長」了後有問題，檢查結果，是「片長」彼位有時無「分級資訊」，所以會揣無[2]，愛用條件式判斷
+        print(f'現在開始抓第{i+1}名的片長！')
+        subsoup=get_soup(f'https://www.imdb.com/title/tt4589218/?ref_=chtmvm_t_{i+1}')
+        ul=subsoup.find('ul',class_='ipc-inline-list ipc-inline-list--show-dividers sc-7f1a92f5-4 kIoyyw baseAlt')
+        leng=ul.find_all('li',class_="ipc-inline-list__item")
+        if len(leng)==3:
+            length=leng[2].text.strip()
+        else:
+            length=leng[1].text.strip()
+        print(length)
+
+        # 預告片連結
+        print(f'現在開始抓第{i+1}名的預告片連結！')
+        prem=subsoup.find('a',class_='ipc-lockup-overlay ipc-focusable').get('href')
+        premlink = 'https://imdb.com'+prem
+        print(premlink)
+
+
+
+        #上映年
+        print(f'現在開始抓第{i+1}名的發行年度！')
+        year = data[i]['node']['releaseYear']['year']
+        print(year)
+
+
+        #IMDb Rating
+        print(f'現在開始抓第{i+1}名的評分！')
+        rating=data[i]['node']['ratingsSummary']['aggregateRating']
+        print(rating)
+
+        #類型
+        print(f'現在開始抓第{i+1}名的類型！')
+        genre=data[i]['node']['titleGenres']['genres'][0]['genre']['text']
+        print(genre)
+
+
+
+        #圖片連結
+        print(f'現在開始抓第{i+1}名的圖片連結！')
+        pic=genre=data[i]['node']['primaryImage']['url']
+        print(pic)
+
+
+    except Exception as e:
+        print(f'第{i+1}名有問題！',e)
+        pass
+
+    pop_movies.append(movie)
